@@ -1,10 +1,12 @@
 package org.legacy.it.program;
 
+import lombok.extern.slf4j.Slf4j;
 import org.legacy.it.request.ServiceTask;
 
 import java.time.Instant;
 import java.util.concurrent.BlockingQueue;
 
+@Slf4j
 public class Cics implements Runnable {
 
     private BlockingQueue responseQueue;
@@ -18,7 +20,7 @@ public class Cics implements Runnable {
     }
 
     public void runProgram() {
-        System.out.println("Calling the RUN method");
+        log.info("Calling the RUN method");
         synchronized (requestQueue) {
             processServiceTask1();
             processServiceTask2();
@@ -27,11 +29,11 @@ public class Cics implements Runnable {
     }
 
     public void processServiceTask1() {
-        System.out.println("In processServiceTask1 : " + Instant.now().toString());
+        log.info("In processServiceTask1 : {}" , Instant.now().toString());
         synchronized (requestQueue) {
             try{
                 Object take = requestQueue.take();
-                System.out.println("Get processServiceTask1: " + take + " ; Time: " + Instant.now().toString());
+                log.info("Get processServiceTask1: {} ; Time: {} " , take, Instant.now().toString());
                 Thread.sleep(2000);
                 final ServiceTask responseServiceTask = ServiceTask.builder().name("screen2").build();
                 responseQueue.put(responseServiceTask);
@@ -41,11 +43,11 @@ public class Cics implements Runnable {
         }
     }
     public void processServiceTask2() {
-        System.out.println("In processServiceTask2: " + Instant.now().toString());
+        log.info("In processServiceTask2 : {}" , Instant.now().toString());
         synchronized (requestQueue) {
             try{
                 Object take = requestQueue.take();
-                System.out.println("Get processServiceTask2: " + take + " ; Time: " + Instant.now().toString());
+                log.info("Get processServiceTask2: {} ; Time: {} " , take, Instant.now().toString());
                 Thread.sleep(2000);
                 final ServiceTask responseServiceTask = ServiceTask.builder().name("screen3").build();
                 responseQueue.put(responseServiceTask);
@@ -55,11 +57,11 @@ public class Cics implements Runnable {
         }
     }
     public void processServiceTask3() {
-        System.out.println("In processServiceTask3: " + Instant.now().toString());
+        log.info("In processServiceTask3 : {}" , Instant.now().toString());
         synchronized (requestQueue) {
             try{
                 Object take = requestQueue.take();
-                System.out.println("Get processServiceTask3: " + take + " ; Time: " + Instant.now().toString());
+                log.info("Get processServiceTask3: {} ; Time: {} " , take, Instant.now().toString());
                 Thread.sleep(2000);
                 final ServiceTask responseServiceTask = ServiceTask.builder().name("end").build();
                 responseQueue.put(responseServiceTask);
@@ -67,23 +69,6 @@ public class Cics implements Runnable {
                 e.printStackTrace();
             }
         }
-    }
-
-    public void processServiceTask(ServiceTask serviceTask) {
-        System.out.println("In processServiceTask: " + Instant.now().toString());
-        synchronized (requestQueue) {
-                try{
-                    Object take = requestQueue.take();
-                    System.out.println("Get: " + take + " ; Time: " + Instant.now().toString());
-                    Thread.sleep(2000);
-                    String name = serviceTask.getName().equals("screen1") ? "screen2" : serviceTask.getName().equals("screen2") ? "screen3": "end";
-                    final ServiceTask responseServiceTask = ServiceTask.builder().name(name).build();
-                    responseQueue.put(responseServiceTask);
-                    responseQueue.notifyAll();
-                    requestQueue.notifyAll();
-                }catch (Exception e){
-                }
-            }
     }
 
     @Override
