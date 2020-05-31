@@ -27,14 +27,12 @@ public class CicsExecutorService {
 
     public ServiceTask nextStage(ServiceTask serviceTask) {
         ServiceTask responseServiceTask;
-        System.out.println("Next Stage comes here: {} ");
         if (serviceTask.getName().equalsIgnoreCase("screen1")) {
             Cics cics = new Cics("Cics-Thread-1", requestQueue, responseQueue);
             executorService.submit(cics, ServiceTask.class);
         }
 
         try{
-            System.out.println("Is it coming here in try block: {} ");
             requestQueue.put(serviceTask);
         } catch (Exception e){e.printStackTrace();}
 
