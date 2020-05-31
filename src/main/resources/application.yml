@@ -1,0 +1,7 @@
+server:
+  port: ${appPort:2443}
+
+#spring:
+#  cache:
+#    jcache:
+#      config: classpath:ehcache.xml
