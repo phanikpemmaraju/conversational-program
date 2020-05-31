@@ -11,7 +11,7 @@ public class CallProgram {
         ServiceTask serviceTask = ServiceTask.builder().name("screen1").build();
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         final BlockingQueue queue = new SynchronousQueue();
-        Cics cics = new Cics("Cics-Thread-1", serviceTask, queue);
+        Cics cics = new Cics("Cics-Thread-1", queue, queue);
 
         synchronized (queue) {
             try{

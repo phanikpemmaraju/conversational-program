@@ -22,7 +22,7 @@ public class ConversationServiceResource {
    @Valid
    public ServiceTask conversationalService(@RequestBody @Valid ServiceTask serviceTask) {
       System.out.println("Executor Service: {} " + cicsExecutorService.getExecutorService());
-      System.out.println("Blocking Queue: {} " + cicsExecutorService.getBlockingQueue());
+      System.out.println("Blocking Queue: {} " + cicsExecutorService.getBlockingRequestQueue());
       return cicsExecutorService.nextStage(serviceTask);
    }
 }
