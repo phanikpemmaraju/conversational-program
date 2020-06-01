@@ -1,7 +1,6 @@
 package org.legacy.it.services;
 
 import org.legacy.it.cache.ProgramCache;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -21,11 +20,5 @@ public class CacheService {
                 .requestQueue(new LinkedBlockingDeque())
                 .responseQueue(new SynchronousQueue())
                 .build();
-    }
-
-    @CachePut(value = "programCache", key = "'cics1-'+#programName")
-    public ProgramCache updateProgramCache(String programName, ProgramCache programCache){
-        programCache.setRunning(true);
-        return programCache;
     }
 }

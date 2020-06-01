@@ -16,7 +16,6 @@ public class ProgramCache {
     private ExecutorService executorService;
     private BlockingQueue requestQueue;
     private BlockingQueue responseQueue;
-    private boolean isRunning;
 }
 
 

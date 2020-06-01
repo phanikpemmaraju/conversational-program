@@ -9,6 +9,9 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -22,21 +25,24 @@ public class FacadeService {
     public ServiceTask nextStage(ServiceTask serviceTask) {
         final String programName = serviceTask.getProgramName();
         final ProgramCache programCache = cacheService.getProgramCache(programName);
-        log.info("Executor Service: {} " , programCache.getExecutorService());
-        log.info("Blocking Queue: {} " , programCache.getRequestQueue());
+        final BlockingQueue requestQueue = programCache.getRequestQueue();
+        final BlockingQueue responseQueue = programCache.getResponseQueue();
+        final ExecutorService executorService = programCache.getExecutorService();
+
+        log.info("Program Cache: {} " , programCache);
         ServiceTask responseServiceTask;
-        Cics cics = new Cics(serviceTask.getProgramName() + "-session", programCache.getRequestQueue(), programCache.getResponseQueue());
-        if (!programCache.isRunning()) {
-            programCache.getExecutorService().submit(cics);
-            cacheService.updateProgramCache(programName, programCache);
+        final Cics cics = new Cics(serviceTask.getProgramName() + "-session", requestQueue, responseQueue);
+        int activeCount = ((ThreadPoolExecutor) executorService).getActiveCount();
+        if (activeCount <= 0) {
+            executorService.submit(cics);
         }
         try{
-            programCache.getRequestQueue().put(serviceTask);
+            requestQueue.put(serviceTask);
         } catch (Exception e){e.printStackTrace();}
 
-        synchronized (programCache.getResponseQueue()) {
+        synchronized (responseQueue) {
             try{
-                responseServiceTask = (ServiceTask) programCache.getResponseQueue().poll(5000, TimeUnit.SECONDS);
+                responseServiceTask = (ServiceTask) responseQueue.poll(5000, TimeUnit.SECONDS);
                 if (Objects.nonNull(responseServiceTask)) {
                     log.info("Response Service Task Screen Name: {} " , responseServiceTask.getName());
                 }
