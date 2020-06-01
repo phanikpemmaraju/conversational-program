@@ -76,5 +76,4 @@ public class Cics implements Runnable {
         Thread.currentThread().setName(name);
         runProgram();
     }
-
 }

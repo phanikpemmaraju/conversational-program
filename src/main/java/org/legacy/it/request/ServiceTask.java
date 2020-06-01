@@ -23,6 +23,10 @@ public class ServiceTask implements Serializable {
 
    @NotNull
    @NotEmpty
+   private String programName;
+
+   @NotNull
+   @NotEmpty
    @Valid
    private List<RequestParam> params;
 
