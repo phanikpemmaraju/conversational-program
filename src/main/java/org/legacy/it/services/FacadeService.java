@@ -31,30 +31,30 @@ public class FacadeService {
 
         log.info("Program Cache: {} " , programCache);
         ServiceTask responseServiceTask;
-        if(serviceTask.getName().equalsIgnoreCase("end")) {
-            executorService.shutdown();
-            cacheService.evictProgramCache(programName);
-            return null;
-        } else {
-            int activeCount = ((ThreadPoolExecutor) executorService).getActiveCount();
-            if (activeCount <= 0) {
-                final Cics cics = new Cics(requestQueue, responseQueue);
-                executorService.submit(cics);
-            }
 
-            try{
-                requestQueue.put(serviceTask);
-            } catch (Exception e){e.printStackTrace();}
-
-            synchronized (responseQueue) {
-                try{
-                    responseServiceTask = (ServiceTask) responseQueue.poll(5000, TimeUnit.SECONDS);
-                    if (Objects.nonNull(responseServiceTask)) {
-                        log.info("Response Service Task Screen Name: {} " , responseServiceTask.getName());
-                    }
-                } catch (Exception e){return null;}
-            }
-            return responseServiceTask;
+        int activeCount = ((ThreadPoolExecutor) executorService).getActiveCount();
+        if (activeCount <= 0) {
+            final Cics cics = new Cics(requestQueue, responseQueue);
+            executorService.submit(cics);
         }
+
+        try{
+            requestQueue.put(serviceTask);
+        } catch (Exception e){e.printStackTrace();}
+
+        synchronized (responseQueue) {
+            try{
+                responseServiceTask = (ServiceTask) responseQueue.poll(5000, TimeUnit.SECONDS);
+                if (Objects.nonNull(responseServiceTask)) {
+                    log.info("Response Service Task Screen Name: {} " , responseServiceTask.getName());
+                }
+                // graceful shutdown
+                if(responseServiceTask.getName().equalsIgnoreCase("end")) {
+                    executorService.shutdown();
+                    cacheService.evictProgramCache(programName);
+                }
+            } catch (Exception e){return null;}
+        }
+        return responseServiceTask;
     }
 }
