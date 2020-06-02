@@ -31,15 +31,14 @@ public class FacadeService {
 
         log.info("Program Cache: {} " , programCache);
         ServiceTask responseServiceTask;
-        int activeCount = ((ThreadPoolExecutor) executorService).getActiveCount();
-
         if(serviceTask.getName().equalsIgnoreCase("end")) {
             executorService.shutdown();
             cacheService.evictProgramCache(programName);
             return null;
         } else {
+            int activeCount = ((ThreadPoolExecutor) executorService).getActiveCount();
             if (activeCount <= 0) {
-                final Cics cics = new Cics(serviceTask.getProgramName() + "-session", requestQueue, responseQueue);
+                final Cics cics = new Cics(requestQueue, responseQueue);
                 executorService.submit(cics);
             }
 

@@ -11,10 +11,8 @@ public class Cics implements Runnable {
 
     private BlockingQueue responseQueue;
     private BlockingQueue requestQueue;
-    private String name;
 
-    public Cics(String name, BlockingQueue requestQueue, BlockingQueue responseQueue) {
-        this.name = name;
+    public Cics(BlockingQueue requestQueue, BlockingQueue responseQueue) {
         this.requestQueue = requestQueue;
         this.responseQueue = responseQueue;
     }
@@ -79,7 +77,6 @@ public class Cics implements Runnable {
 
     @Override
     public void run() {
-        Thread.currentThread().setName(name);
         runProgram();
     }
 }
