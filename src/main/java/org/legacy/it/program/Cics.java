@@ -9,8 +9,8 @@ import java.util.concurrent.BlockingQueue;
 @Slf4j
 public class Cics implements Runnable {
 
-    private BlockingQueue responseQueue;
     private BlockingQueue requestQueue;
+    private BlockingQueue responseQueue;
 
     public Cics(BlockingQueue requestQueue, BlockingQueue responseQueue) {
         this.requestQueue = requestQueue;
