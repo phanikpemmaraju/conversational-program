@@ -31,23 +31,31 @@ public class FacadeService {
 
         log.info("Program Cache: {} " , programCache);
         ServiceTask responseServiceTask;
-        final Cics cics = new Cics(serviceTask.getProgramName() + "-session", requestQueue, responseQueue);
         int activeCount = ((ThreadPoolExecutor) executorService).getActiveCount();
-        if (activeCount <= 0) {
-            executorService.submit(cics);
-        }
-        try{
-            requestQueue.put(serviceTask);
-        } catch (Exception e){e.printStackTrace();}
 
-        synchronized (responseQueue) {
+        if(serviceTask.getName().equalsIgnoreCase("end")) {
+            executorService.shutdown();
+            cacheService.evictProgramCache(programName);
+            return null;
+        } else {
+            if (activeCount <= 0) {
+                final Cics cics = new Cics(serviceTask.getProgramName() + "-session", requestQueue, responseQueue);
+                executorService.submit(cics);
+            }
+
             try{
-                responseServiceTask = (ServiceTask) responseQueue.poll(5000, TimeUnit.SECONDS);
-                if (Objects.nonNull(responseServiceTask)) {
-                    log.info("Response Service Task Screen Name: {} " , responseServiceTask.getName());
-                }
-            } catch (Exception e){return null;}
+                requestQueue.put(serviceTask);
+            } catch (Exception e){e.printStackTrace();}
+
+            synchronized (responseQueue) {
+                try{
+                    responseServiceTask = (ServiceTask) responseQueue.poll(5000, TimeUnit.SECONDS);
+                    if (Objects.nonNull(responseServiceTask)) {
+                        log.info("Response Service Task Screen Name: {} " , responseServiceTask.getName());
+                    }
+                } catch (Exception e){return null;}
+            }
+            return responseServiceTask;
         }
-        return responseServiceTask;
     }
 }

@@ -20,11 +20,17 @@ public class Cics implements Runnable {
     }
 
     public void runProgram() {
-        log.info("Calling the RUN method");
-        synchronized (requestQueue) {
-            processServiceTask1();
-            processServiceTask2();
-            processServiceTask3();
+        try{
+            log.info("Calling the RUN method for thread id: {}", Thread.currentThread().getId());
+            synchronized (requestQueue) {
+                processServiceTask1();
+                processServiceTask2();
+                processServiceTask3();
+            }
+        } finally {
+            requestQueue = null;
+            responseQueue = null;
+            Thread.currentThread().interrupt();
         }
     }
 
