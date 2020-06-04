@@ -37,21 +37,16 @@ public class FacadeService {
 
         try{
             requestQueue.put(serviceTask);
-        } catch (Exception e){e.printStackTrace();}
-
-        synchronized (responseQueue) {
-            try{
-                responseServiceTask = (ServiceTask) responseQueue.poll(5000, TimeUnit.SECONDS);
-                if (Objects.nonNull(responseServiceTask)) {
-                    log.info("Response Service Task Screen Name: {} " , responseServiceTask.getName());
-                }
-                // graceful shutdown
-                if(responseServiceTask.getName().equalsIgnoreCase("end")) {
-                    executorService.shutdown();
-                    cacheService.evictProgramCache(programName);
-                }
-            } catch (Exception e){return null;}
-        }
+            responseServiceTask = (ServiceTask) responseQueue.poll(5000, TimeUnit.SECONDS);
+            if (Objects.nonNull(responseServiceTask)) {
+                log.info("Response Service Task Screen Name: {} " , responseServiceTask.getName());
+            }
+            // graceful shutdown
+            if(responseServiceTask.getName().equalsIgnoreCase("end")) {
+                executorService.shutdown();
+                cacheService.evictProgramCache(programName);
+            }
+        } catch (Exception e){return null;}
         return responseServiceTask;
     }
 }
