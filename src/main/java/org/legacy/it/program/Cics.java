@@ -6,6 +6,12 @@ import org.legacy.it.request.ServiceTask;
 import java.time.Instant;
 import java.util.concurrent.BlockingQueue;
 
+/*
+    NOTE: Every Cics program should have the below.
+    It should implement Runnable interface
+    It should accept Request and Response blocking queues as constructor parameters.
+*/
+
 @Slf4j
 public class Cics implements Runnable {
 
@@ -18,16 +24,10 @@ public class Cics implements Runnable {
     }
 
     public void runProgram() {
-        try{
-            log.info("Calling the RUN method for thread id: {}", Thread.currentThread().getId());
-            processServiceTask1();
-            processServiceTask2();
-            processServiceTask3();
-        } finally {
-            requestQueue = null;
-            responseQueue = null;
-            Thread.currentThread().interrupt();
-        }
+        log.info("Calling the RUN method for thread id: {}", Thread.currentThread().getId());
+        processServiceTask1();
+        processServiceTask2();
+        processServiceTask3();
     }
 
     public void processServiceTask1() {
@@ -35,10 +35,10 @@ public class Cics implements Runnable {
         try{
             Object take = requestQueue.take();
             log.info("Get processServiceTask1: {} ; Time: {} " , take, Instant.now().toString());
-//            Thread.sleep(2000);
+            Thread.sleep(2000);
             final ServiceTask responseServiceTask = ServiceTask.builder().name("screen2").build();
             responseQueue.put(responseServiceTask);
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -47,10 +47,10 @@ public class Cics implements Runnable {
         try{
             Object take = requestQueue.take();
             log.info("Get processServiceTask2: {} ; Time: {} " , take, Instant.now().toString());
-//            Thread.sleep(2000);
+            Thread.sleep(2000);
             final ServiceTask responseServiceTask = ServiceTask.builder().name("screen3").build();
             responseQueue.put(responseServiceTask);
-        }catch (Exception e){
+        } catch (Exception e){
             e.printStackTrace();
         }
     }
@@ -59,10 +59,10 @@ public class Cics implements Runnable {
         try{
             Object take = requestQueue.take();
             log.info("Get processServiceTask3: {} ; Time: {} " , take, Instant.now().toString());
-//            Thread.sleep(2000);
+            Thread.sleep(2000);
             final ServiceTask responseServiceTask = ServiceTask.builder().name("end").build();
             responseQueue.put(responseServiceTask);
-        }catch (Exception e){
+        } catch (Exception e){
             e.printStackTrace();
         }
     }

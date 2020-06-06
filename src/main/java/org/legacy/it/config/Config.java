@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Scope;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+// NOTE: New instance of Executor Service bean should be created for every Session Id.
+
 @Configuration
 public class Config {
 

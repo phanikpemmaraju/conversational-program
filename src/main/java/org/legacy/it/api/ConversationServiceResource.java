@@ -22,7 +22,7 @@ public class ConversationServiceResource {
    @RequestMapping(value = "/conversation-services", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
    @ResponseBody
    @Valid
-   public ServiceTask conversationalService(@RequestBody @Valid ServiceTask serviceTask) {
+   public ServiceTask conversationalProgram(@RequestBody @Valid ServiceTask serviceTask) {
       return facadeService.nextStage(serviceTask);
    }
 }

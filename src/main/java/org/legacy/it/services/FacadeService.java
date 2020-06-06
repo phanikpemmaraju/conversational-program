@@ -11,6 +11,13 @@ import org.springframework.stereotype.Service;
 import java.util.Objects;
 import java.util.concurrent.*;
 
+/*
+*  NOTE: This is the main Service which creates instance of the Cics programs
+*        and pushes messages to the request blocking queues.
+*        The service polls on the response blocking queues for any response within the transaction.
+*
+*/
+
 @Service
 @Slf4j
 public class FacadeService {
@@ -42,10 +49,10 @@ public class FacadeService {
                 log.info("Response Service Task Screen Name: {} " , responseServiceTask.getName());
             }
             // graceful shutdown
-            if(responseServiceTask.getName().equalsIgnoreCase("end")) {
+            /* if(responseServiceTask.getName().equalsIgnoreCase("end")) {
                 executorService.shutdown();
                 cacheService.evictProgramCache(programName);
-            }
+            } */
         } catch (Exception e){return null;}
         return responseServiceTask;
     }

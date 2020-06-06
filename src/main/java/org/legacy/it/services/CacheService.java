@@ -10,6 +10,11 @@ import org.springframework.stereotype.Service;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 
+/*
+NOTE: This is a service which interface the Cache layer to manage
+         the Program Cache for every Session Id.
+*/
+
 @Service
 @Slf4j
 public class CacheService {
@@ -19,17 +24,19 @@ public class CacheService {
         return null;
     }
 
+    // NOTE: We will replace the programName with the session Id.
     @Cacheable(value = "programCache", key = "'cics1-'+#programName")
     public ProgramCache getProgramCache(String programName) {
         final ExecutorService executorService = getNewExecutorService();
         log.info("Program Caching Name:{}, executorService:{} ", programName, executorService);
         return ProgramCache.builder()
                 .executorService(executorService)
-                .requestQueue(new ArrayBlockingQueue(100))
-                .responseQueue(new ArrayBlockingQueue(100))
+                .requestQueue(new ArrayBlockingQueue(25))
+                .responseQueue(new ArrayBlockingQueue(25))
                 .build();
     }
 
+    // NOTE: We will replace the programName with the session Id.
     @CacheEvict(value = "programCache", key = "'cics1-'+#programName")
     public void evictProgramCache(String programName) {}
 

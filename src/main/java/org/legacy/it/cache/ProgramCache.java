@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 
+// NOTE: For every Session id, the application will have an instance of Program Cache.
+
 @Data
 @Builder
 @NoArgsConstructor
