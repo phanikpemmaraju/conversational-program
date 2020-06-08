@@ -9,7 +9,10 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
-import java.util.concurrent.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /*
 *  NOTE: This is the main Service which creates instance of the Cics programs
@@ -48,9 +51,10 @@ public class FacadeService {
             if (Objects.nonNull(responseServiceTask)) {
                 log.info("Response Service Task Screen Name: {} " , responseServiceTask.getName());
             }
+
             // graceful shutdown
             /* if(responseServiceTask.getName().equalsIgnoreCase("end")) {
-                executorService.shutdown();
+                executorService.shutdownNow();
                 cacheService.evictProgramCache(programName);
             } */
         } catch (Exception e){return null;}

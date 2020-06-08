@@ -1,0 +1,10 @@
+{
+  "name": "screen1",
+  "programName": "cics",
+  "params": [
+    {
+      "name": "lkDat1",
+      "value": "05032020  "
+    }
+  ]
+}
